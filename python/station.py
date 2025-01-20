@@ -1,4 +1,5 @@
 import csv
+import requests
 from math import radians, sin, cos, atan2, sqrt
 
 class Station:
@@ -47,20 +48,34 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
     return R * c
 
-# Liste der Stationen einlesen
-def load_stations(filename):
-    stations = []
-    with open(filename, mode='r', encoding='utf-8') as file:
-        reader = csv.DictReader(file, fieldnames=["ID", "LATITUDE", "LONGITUDE", "ELEVATION", "STATE", "NAME", "GSN", "HCN", "WMO"])
+def load_stations_from_url(url):
+    """
+    Lädt die Stationsdaten von einer URL und erstellt eine Liste von Station-Objekten.
 
-        for row in reader:
+    :param url: Die URL der CSV-Datei mit den Stationsdaten.
+    :return: Eine Liste von Station-Objekten.
+    """
+    print(f"Lade Stationsdaten von {url}...")
+    response = requests.get(url)
+    print(f"Status-Code: {response.status_code}")
+
+    if response.status_code == 200:
+        stations = []
+        content = response.text  # Inhalt der CSV-Datei als Text
+        csv_reader = csv.DictReader(content.splitlines(), fieldnames=["ID", "LATITUDE", "LONGITUDE", "ELEVATION", "STATE", "NAME", "GSN", "HCN", "WMO"])
+
+        for row in csv_reader:
             station = Station(
                 id=row["ID"],
                 latitude=float(row["LATITUDE"]),
                 longitude=float(row["LONGITUDE"])
             )
             stations.append(station)
-    return stations
+
+        return stations
+    else:
+        print(f"Fehler beim Abrufen der Datei: HTTP {response.status_code}")
+        return []
 
 # Stationen im Radius finden
 def find_stations_within_radius(stations, latitude, longitude, radius):

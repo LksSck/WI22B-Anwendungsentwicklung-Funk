@@ -1,12 +1,19 @@
 CREATE DATABASE IF NOT EXISTS db;
 use db;
 
-CREATE TABLE students(
-    StudentID int not null AUTO_INCREMENT,
-    FirstName varchar(100) NOT NULL,
-    Surname varchar(100) NOT NULL,
-    PRIMARY KEY (StudentID)
+CREATE TABLE Station (
+    id VARCHAR(50) PRIMARY KEY,      -- Eindeutige ID der Station, max. Länge 50 Zeichen
+    latitude FLOAT NOT NULL,         -- Geografische Breite, erforderlich
+    longitude FLOAT NOT NULL         -- Geografische Länge, erforderlich
 );
 
-INSERT INTO students(FirstName, Surname)
-VALUES ("John", "Andersen"), ("Emma", "Smith");
+CREATE TABLE Datapoint (
+    id INT AUTO_INCREMENT PRIMARY KEY,    -- Eindeutige ID für jeden Datensatz
+    station_id VARCHAR(50),               -- Fremdschlüssel zur Station-Tabelle
+    year INT NOT NULL,
+    month INT NOT NULL,
+    tmax FLOAT NOT NULL,                  -- Durchschnittlicher Tmax-Wert des Monats
+    tmin FLOAT NOT NULL,                  -- Durchschnittlicher Tmin-Wert des Monats
+    FOREIGN KEY (station_id) REFERENCES Station(id) ON DELETE CASCADE
+);
+

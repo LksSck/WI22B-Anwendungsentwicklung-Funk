@@ -1,6 +1,5 @@
-print("Moin")
 # Datei öffnen
-import station
+from python import station
 
 # url = "https://www.ncei.noaa.gov/data/global-historical-climatology-network-daily/access/csv/ghcnd-stations.csv"
 # response = requests.get(url)
@@ -11,7 +10,8 @@ import station
 # Hauptlogik
 if __name__ == "__main__":
     # CSV-Datei einlesen
-    stations = station.load_stations('../ghcnd-stations.csv')
+    stations = station.load_stations_from_url('https://www1.ncdc.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.csv')
+    # print(stations)
 
     # Eingabe der Koordinate und des Radius
     latitude = float(input("Geben Sie die Breite (Latitude) ein: "))
